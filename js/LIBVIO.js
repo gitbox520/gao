@@ -6,7 +6,7 @@ var rule = {
 	title:'LIBVIO',
 	模板:'首图2',
 	// host:'https://tv.libvio.cc',
-	host:'https://libvio.cc',
+	host:'https://www.libvio.la',
 	//hostJs:'print(HOST);let html=request(HOST,{headers:{"User-Agent":PC_UA}});let src=jsp.pdfh(html,"li:eq(0)&&a:eq(0)&&href");print(src);HOST=src',
 	// url:'/type/fyclass-fypage.html',
 	url:'/show/fyclassfyfilter.html',
@@ -29,31 +29,46 @@ var rule = {
 	tab_exclude: '百度',
 	pagecount:{"27":1},
 	二级: {
-		"title": ".stui-content__detail .title&&Text;.stui-content__detail p:eq(-2)&&Text",
-		"img": ".stui-content__thumb .lazyload&&data-original",
-		"desc": ".stui-content__detail p:eq(0)&&Text;.stui-content__detail p:eq(1)&&Text;.stui-content__detail p:eq(2)&&Text",
-		"content": ".detail&&Text",
+		"title": ".vod-info .title&&Text;.vod-info .vod-meta:eq(0)&&Text",
+		"img": ".vod-poster__wrap .lazyload&&data-original",
+		"desc": ".vod-info .vod-rating .score&&Text;.vod-info .vod-meta:eq(1)&&Text;.vod-info .vod-meta:eq(2)&&Text",
+		"content": ".vod-desc .detail-sketch&&Text",
 		"tabs": `js:
 pdfh=jsp.pdfh;pdfa=jsp.pdfa;pd=jsp.pd;
 LISTS = [];
 let listq=[];
-let d = pdfa(html, 'div.stui-vodlist__head');
-d.forEach(function(it){
-	let name = pdfh(it, 'h3&&Text');
-	if (!/(猜你|喜欢|剧情|热播)/.test(name)){
-		log("libvio tabs name>>>>>>>>>>>>>>>" + name);
-		let durl = pdfa(it, 'ul li');
-		durl.forEach(function(it1){
-			var dhref = pd(it1, 'a&&href', HOST);
-			let dname = pdfh(it1, 'a&&Text');
-			if (/(夸克|阿里)/.test(name)){
-				var html = JSON.parse(request(dhref).match(/r player_.*?=(.*?)</)[1]);
-				dhref = html.url;
-				listq.push(dhref);
-			}
-		});
-	}
+
+let allATags = pdfa(html, 'a');
+
+allATags.forEach(a => {
+    // 取出 href
+    let href = pd(a, 'a&&href', HOST);
+    
+    if (href.includes("quark.cn") || href.includes("drive.uc.cn") || href.includes("aliyundrive.com") || href.includes("alipan.com") || href.includes("115.com") || href.includes("anxia.com") || href.includes("115cdn.com")) {
+        if (!listq.includes(href)) {
+            listq.push(href);
+            log("从href获取到网盘链接：" + href);
+        }
+    }
 });
+
+// let d = pdfa(html, 'div.stui-vodlist__head');
+// d.forEach(function(it){
+// 	let name = pdfh(it, 'h3&&Text');
+// 	if (!/(猜你|喜欢|剧情|热播)/.test(name)){
+// 		log("libvio tabs name>>>>>>>>>>>>>>>" + name);
+// 		let durl = pdfa(it, 'ul li');
+// 		durl.forEach(function(it1){
+// 			var dhref = pd(it1, 'a&&href', HOST);
+// 			let dname = pdfh(it1, 'a&&Text');
+// 			if (/(夸克|阿里)/.test(name)){
+// 				var html = JSON.parse(request(dhref).match(/r player_.*?=(.*?)</)[1]);
+// 				dhref = html.url;
+// 				listq.push(dhref);
+// 			}
+// 		});
+// 	}
+// });
 if (listq.length){
 	initPan();
 	let alistVod = panDetailContent(vod ,listq);
