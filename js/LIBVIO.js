@@ -31,7 +31,7 @@ var rule = {
 	二级: {
 		"title": ".vod-info .title&&Text;.vod-info .vod-meta:eq(0)&&Text",
 		"img": ".vod-poster__wrap .lazyload&&data-original",
-		"desc": ".vod-info .vod-rating .score&&Text;.vod-info .vod-meta:eq(1)&&Text;.vod-info .vod-meta:eq(2)&&Text",
+		"desc": ".vod-info .vod-rating .score&&Text;;",
 		"content": ".vod-desc .detail-sketch&&Text",
 		"tabs": `js:
 pdfh=jsp.pdfh;pdfa=jsp.pdfa;pd=jsp.pd;
